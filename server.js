@@ -28,15 +28,3 @@ app.get('/', function(req, res) {
 app.listen(port);
 console.log('Have Fun on ' + port);
 
-
-// cron job
-
-
-var CronJob = require('cron').CronJob;
-new CronJob('0 */60 * * * *', function() {
-  console.log('Fetching Data');
-  var file = fs.createWriteStream("./views/data.json");
-	var request = http.get("http://api.freifunk.net/data/ffSummarizedDir.json", function(response) {
-	  response.pipe(file);
-	});
-}, null, true, 'America/Los_Angeles');

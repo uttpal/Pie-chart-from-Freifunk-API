@@ -42,10 +42,14 @@ console.log(211)
 // var script = document.createElement('script');
 // script.src = url
 // document.getElementsByTagName('head').appendChild(script);
+function myf (argument) {
+    console.log("succ");
+}
 
-var url = "/data.json";
+var url = "http://api.freifunk.net/map/ffApiJsonp.php?mode=summary&callback=?";
 
-$.getJSON(url, function(data) {
+function getDataAndDraw (data) {
+    
 
     function getRandomColor() {
         var letters = '0123456789ABCDEF'.split('');
@@ -74,4 +78,11 @@ $.getJSON(url, function(data) {
     }
 
     drawc(output);
-});
+};
+
+ $.ajax({
+        type: 'GET',
+        url: url,
+        dataType: 'jsonp',
+        success: getDataAndDraw
+    });
