@@ -1,0 +1,9 @@
+{
+  "name": "chart-app",
+  "main": "server.js",
+  "dependencies": {
+    "cron": "^1.1.0",
+    "ejs": "~0.8.5",
+    "express": "~4.0.0"
+  }
+}
