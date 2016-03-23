@@ -1,4 +1,4 @@
-function drawc (data) {
+function drawc (data,canvasId) {
 
 
 var options = {
@@ -32,18 +32,8 @@ var options = {
 }
 
 
-var ctx = document.getElementById("pie").getContext("2d");
+var ctx = document.getElementById(canvasId).getContext("2d");
 new Chart(ctx).Pie(data,options);
-}
-console.log(211)
-
-//var url = "http://api.freifunk.net/data/ffSummarizedDir.json?callback=drawc";
-
-// var script = document.createElement('script');
-// script.src = url
-// document.getElementsByTagName('head').appendChild(script);
-function myf (argument) {
-    console.log("succ");
 }
 
 var url = "http://api.freifunk.net/map/ffApiJsonp.php?mode=summary&callback=?";
@@ -59,26 +49,71 @@ function getDataAndDraw (data) {
         }
         return color;
     }
-    var output = [];
+
+    function outputDataFromObj (data) {
+        var output = []
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                var structure = {
+                    value: data[key],
+                    color: getRandomColor(),
+                    highlight: "#FFC870",
+                    label: key
+                }
+                output.push(structure);
+            }
+        }
+        return output;
+    }
+
+    function createValuesObject (dataArray, rawObj) {
+        for (var i = 0; i < dataArray.length; i++) {
+            if (dataArray[i].length > 1) {
+                if(rawObj[""+ dataArray[i]]){
+                    rawObj[""+ dataArray[i]]++;
+                } else{
+                    rawObj[""+ dataArray[i]] = 1;
+                }
+            };
+        }
+        return;
+    }
+    var outputPie = [];
+    var rawRoute = {};
+    var rawFocus = {};
 
     for (var key in data) {
       if (data.hasOwnProperty(key)) {
         var val = data[key];
         if (val.state.nodes) {
-            var structure =     {
+            var nodesStructure = {
                 value: val.state.nodes,
                 color: getRandomColor(),
                 highlight: "#FFC870",
                 label: val.name
             }
-            output.push(structure)
+            outputPie.push(nodesStructure)
+        }
+
+        var routingArray = val.techDetails.routing;
+        createValuesObject(routingArray,rawRoute);
+
+       var focusArray = val.state.focus;
+        if(focusArray){
+            createValuesObject(focusArray,rawFocus);
+        }
         }
 
       }
+    var outRouter = outputDataFromObj(rawRoute);
+    var outFocus = outputDataFromObj(rawFocus);
+
+
+    drawc(outFocus,"focus");
+    drawc(outputPie,"pie");
+    drawc(outRouter,"route");
     }
 
-    drawc(output);
-};
 
  $.ajax({
         type: 'GET',
